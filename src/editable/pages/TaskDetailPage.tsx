@@ -5,6 +5,7 @@ import { buildPostMetadata, buildTaskMetadata } from '@/lib/seo'
 import { fetchArticleComments, fetchTaskPostBySlug, fetchTaskPosts } from '@/lib/task-data'
 import { getTaskConfig, SITE_CONFIG, type TaskKey } from '@/lib/site-config'
 import type { SitePost } from '@/lib/site-connector'
+import { Ads } from '@/lib/ads'
 import { EditableSiteShell } from '@/editable/shell/EditableSiteShell'
 import { EditableArticleComments } from '@/editable/components/EditableArticleComments'
 import { getTaskTheme, taskThemeStyle } from '@/editable/theme/task-themes'
@@ -194,17 +195,45 @@ function ArticleDetail({ post, related, comments }: { post: SitePost; related: S
   const images = getImages(post)
   return (
     <>
-      <article className="mx-auto max-w-4xl px-6 py-14 sm:py-20">
-        <BackLink task="article" />
-        <p className="mt-10 text-xs font-medium uppercase tracking-[0.28em] text-[var(--tk-accent)]">{categoryOf(post, 'Article')}</p>
-        <h1 className="editable-display mt-5 text-balance text-4xl font-semibold leading-[1.06] tracking-[-0.03em] sm:text-5xl lg:text-[3.4rem]">{post.title}</h1>
-        <div className="mt-6 text-sm text-[var(--tk-muted)]">
-          <span>{SITE_CONFIG.name}</span>
+      <header className="relative overflow-hidden bg-[#10001c] px-6 py-16 text-center sm:py-24">
+        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_50%_0%,rgba(176,95,244,0.34),transparent_32rem)]" />
+        <div className="relative mx-auto max-w-5xl">
+          <BackLink task="article" />
+          <p className="mt-12 text-sm font-semibold text-[var(--tk-accent)]">{categoryOf(post, 'Article')}</p>
+          <h1 className="editable-display mx-auto mt-6 max-w-5xl text-balance text-4xl font-extrabold leading-[1.08] tracking-[-0.05em] sm:text-5xl lg:text-6xl">{post.title}</h1>
+          <DetailMeta post={post} category={SITE_CONFIG.name} center />
         </div>
-        {images[0] ? <img src={images[0]} alt="" className="mt-10 aspect-[16/9] w-full rounded-[var(--tk-radius)] border border-[var(--tk-line)] object-cover" /> : null}
-        <BodyContent post={post} />
-        <EditableArticleComments slug={post.slug} comments={comments} />
-      </article>
+      </header>
+
+      <section className="mx-auto grid max-w-[var(--editable-container)] gap-10 px-6 py-10 lg:grid-cols-[minmax(0,1fr)_360px] lg:px-8">
+        <article className="min-w-0">
+          {images[0] ? <img src={images[0]} alt="" className="aspect-[16/9] w-full rounded-[var(--tk-radius)] border-2 border-[var(--tk-accent)]/70 object-cover" /> : null}
+          <BodyContent post={post} />
+          <div id="article-comments">
+            <EditableArticleComments slug={post.slug} comments={comments} />
+          </div>
+
+        </article>
+        <aside className="space-y-6 lg:sticky lg:top-28 lg:self-start">
+          <Ads slot="sidebar" size="mpu" showLabel className="mx-auto w-full" />
+          <div className="rounded-[var(--tk-radius)] border border-[var(--tk-line)] bg-[var(--tk-surface)] p-7">
+            <h2 className="editable-display text-xl font-extrabold tracking-[-0.03em]">Table of contents</h2>
+            <div className="mt-5 h-px bg-[var(--tk-line)]" />
+            <div className="mt-5 grid gap-3 text-sm font-extrabold leading-6 text-white">
+              <a href="#article-content" className="text-[var(--tk-accent)]">Article overview</a>
+              <a href="#article-comments" className="text-white/85 transition hover:text-[var(--tk-accent)]">Reader comments</a>
+              <a href="#related-posts" className="text-white/85 transition hover:text-[var(--tk-accent)]">Related posts</a>
+            </div>
+          </div>
+          <div className="rounded-[var(--tk-radius)] bg-[#240041] p-7">
+            <h2 className="editable-display text-2xl font-extrabold leading-tight tracking-[-0.04em]">Contact us if you have any question</h2>
+            <Link href="/contact" className="editable-gradient-button mt-6 inline-flex rounded-full px-6 py-3 text-sm font-extrabold uppercase tracking-[0.16em] text-white">Contact</Link>
+          </div>
+        </aside>
+      </section>
+      <div className="mx-auto max-w-[var(--editable-container)] px-6 pb-12 lg:px-8">
+        <Ads slot="footer" size="leaderboard" showLabel className="mx-auto w-full" />
+      </div>
       <RelatedStrip task="article" related={related} />
     </>
   )
@@ -220,33 +249,40 @@ function ListingDetail({ post, related }: { post: SitePost; related: SitePost[] 
   const website = getField(post, ['website', 'url'])
   const mapSrc = mapSrcFor(post)
   return (
-    <section className="mx-auto max-w-[var(--editable-container)] px-6 py-14 sm:py-20 lg:px-8">
-      <BackLink task="listing" />
-      <div className="mt-8 grid gap-10 lg:grid-cols-[minmax(0,1fr)_380px]">
-        <article className="min-w-0">
-          <div className="flex flex-col gap-6 sm:flex-row sm:items-center">
-            <div className="flex h-28 w-28 shrink-0 items-center justify-center overflow-hidden rounded-[var(--tk-radius)] border border-[var(--tk-line)] bg-[var(--tk-raised)]">
-              {logo ? <img src={logo} alt="" className="h-full w-full object-cover" /> : <Building2 className="h-12 w-12 text-[var(--tk-muted)]" />}
+    <>
+      <section className="mx-auto max-w-[var(--editable-container)] px-6 py-14 sm:py-20 lg:px-8">
+        <BackLink task="listing" />
+        <div className="mt-8">
+          <Ads slot="header" size="leaderboard" showLabel eager className="mx-auto w-full" />
+        </div>
+        <div className="mt-8 grid gap-10 lg:grid-cols-[minmax(0,1fr)_380px]">
+          <article className="min-w-0">
+            <div className="flex flex-col gap-6 sm:flex-row sm:items-center">
+              <div className="flex h-28 w-28 shrink-0 items-center justify-center overflow-hidden rounded-[var(--tk-radius)] border border-[var(--tk-line)] bg-[var(--tk-raised)]">
+                {logo ? <img src={logo} alt="" className="h-full w-full object-cover" /> : <Building2 className="h-12 w-12 text-[var(--tk-muted)]" />}
+              </div>
+              <div className="min-w-0">
+                <Kicker task="listing">Business listing</Kicker>
+                <h1 className="editable-display mt-4 text-4xl font-semibold leading-[1.04] tracking-[-0.03em] sm:text-5xl">{post.title}</h1>
+                <DetailMeta post={post} category={getField(post, ['category'])} />
+              </div>
             </div>
-            <div className="min-w-0">
-              <Kicker task="listing">Business listing</Kicker>
-              <h1 className="editable-display mt-4 text-4xl font-semibold leading-[1.04] tracking-[-0.03em] sm:text-5xl">{post.title}</h1>
-              <DetailMeta post={post} category={getField(post, ['category'])} />
-            </div>
-          </div>
-          {leadText(post) ? <p className="mt-7 max-w-2xl text-lg leading-8 text-[var(--tk-muted)]">{leadText(post)}</p> : null}
-          <InfoGrid items={[['Location', address, MapPin], ['Phone', phone, Phone], ['Email', email, Mail], ['Website', website, Globe2]]} />
-          <Divider />
-          <BodyContent post={post} />
-          <ImageStrip images={images.slice(1)} label="Showcase" />
-        </article>
-        <aside className="space-y-6 lg:sticky lg:top-24 lg:self-start">
-          {mapSrc ? <MapBox src={mapSrc} label={address || post.title} /> : null}
-          <ContactAction website={website} phone={phone} email={email} />
-          <RelatedPanel task="listing" post={post} related={related} />
-        </aside>
-      </div>
-    </section>
+            {leadText(post) ? <p className="mt-7 max-w-2xl text-lg leading-8 text-[var(--tk-muted)]">{leadText(post)}</p> : null}
+            <InfoGrid items={[['Location', address, MapPin], ['Phone', phone, Phone], ['Email', email, Mail], ['Website', website, Globe2]]} />
+            <Divider />
+            <BodyContent post={post} />
+            <ImageStrip images={images.slice(1)} label="Showcase" />
+
+          </article>
+          <aside className="space-y-6 lg:sticky lg:top-24 lg:self-start">
+
+            {mapSrc ? <MapBox src={mapSrc} label={address || post.title} /> : null}
+            <RelatedPanel task="listing" post={post} related={related} />
+          </aside>
+        </div>
+      </section>
+
+    </>
   )
 }
 
@@ -425,6 +461,7 @@ function Divider() {
 function BodyContent({ post, compact = false }: { post: SitePost; compact?: boolean }) {
   return (
     <div
+      id="article-content"
       className={`article-content mt-8 max-w-none text-[var(--tk-text)] ${compact ? 'text-[15px] leading-7' : 'text-[1.0625rem] leading-8'}`}
       dangerouslySetInnerHTML={{ __html: formatPlainText(getBody(post)) }}
     />
@@ -524,7 +561,7 @@ function RelatedStrip({ task, related }: { task: TaskKey; related: SitePost[] })
   if (!related.length) return null
   const taskConfig = getTaskConfig(task)
   return (
-    <section className="border-t border-[var(--tk-line)]">
+    <section id="related-posts" className="border-t border-[var(--tk-line)]">
       <div className="mx-auto max-w-[var(--editable-container)] px-6 py-14 sm:py-16 lg:px-8">
         <div className="flex items-center justify-between">
           <h2 className="editable-display text-2xl font-semibold tracking-[-0.02em]">More {(taskConfig?.label || 'posts').toLowerCase()}</h2>
@@ -540,7 +577,7 @@ function RelatedStrip({ task, related }: { task: TaskKey; related: SitePost[] })
 
 function RelatedCard({ task, post, grid = false }: { task: TaskKey; post: SitePost; grid?: boolean }) {
   const image = getImages(post)[0]
-  // Build the detail URL from the task route (e.g. /listing/<slug>) — the same
+  // Build the detail URL from the task route (e.g. /listing/<slug>) - the same
   // base the archive cards use. buildPostUrl() can fall back to /posts when the
   // task isn't in the enabled taskViews map, which 404s.
   const href = `${getTaskConfig(task)?.route || `/${task}`}/${post.slug}`
@@ -567,4 +604,3 @@ function RelatedCard({ task, post, grid = false }: { task: TaskKey; post: SitePo
     </Link>
   )
 }
-
